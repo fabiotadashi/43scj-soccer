@@ -1,7 +1,9 @@
 package br.com.fiap.soccer.controller;
 
+import br.com.fiap.soccer.dto.CreateUpdateTeamDTO;
 import br.com.fiap.soccer.dto.TeamDTO;
 import br.com.fiap.soccer.dto.TeamFilterDTO;
+import br.com.fiap.soccer.dto.UpdateTeamMembersDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -44,9 +46,46 @@ public class TeamController {
     @GetMapping("{id}")
     public TeamDTO findById(@PathVariable Long id){
         return list.stream()
-                .filter(teamDTO -> teamDTO.getId() == id)
+                .filter(teamDTO -> teamDTO.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @PostMapping
+    public TeamDTO create(@RequestBody CreateUpdateTeamDTO createUpdateTeamDTO){
+        TeamDTO teamDTO = new TeamDTO();
+        teamDTO.setId(list.size() + 1L);
+        teamDTO.setName(createUpdateTeamDTO.getName());
+        teamDTO.setMembers(createUpdateTeamDTO.getMembers());
+        teamDTO.setFoundationDate(createUpdateTeamDTO.getFoundationDate());
+
+        list.add(teamDTO);
+        return teamDTO;
+    }
+
+    @PutMapping("{id}")
+    public TeamDTO update(@PathVariable Long id,
+                          @RequestBody CreateUpdateTeamDTO createUpdateTeamDTO){
+        TeamDTO teamDTO = findById(id);
+        teamDTO.setName(createUpdateTeamDTO.getName());
+        teamDTO.setMembers(createUpdateTeamDTO.getMembers());
+        teamDTO.setFoundationDate(createUpdateTeamDTO.getFoundationDate());
+
+        return teamDTO;
+    }
+
+    @PatchMapping("{id}")
+    public TeamDTO updateMembers(@PathVariable Long id,
+                                 @RequestBody UpdateTeamMembersDTO updateTeamMembersDTO){
+        TeamDTO teamDTO = findById(id);
+        teamDTO.setMembers(updateTeamMembersDTO.getMembers());
+
+        return teamDTO;
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable Long id){
+        TeamDTO teamDTO = findById(id);
+        list.remove(teamDTO);
+    }
 }

@@ -14,4 +14,8 @@ spring:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+
+jwt:
+  secret: f14ps3cr37
+  expireMinutes: 5

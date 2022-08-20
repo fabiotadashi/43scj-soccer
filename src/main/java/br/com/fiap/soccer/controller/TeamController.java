@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping("teams")
 public class TeamController {
 
-    private TeamService teamService;
+    private final TeamService teamService;
 
     public TeamController(TeamService teamService) {
         this.teamService = teamService;

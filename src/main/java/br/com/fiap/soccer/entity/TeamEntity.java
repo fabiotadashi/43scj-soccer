@@ -1,12 +1,17 @@
 package br.com.fiap.soccer.entity;
 
 import br.com.fiap.soccer.dto.CreateUpdateTeamDTO;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "TB_TEAM")
+@EntityListeners(AuditingEntityListener.class)
 public class TeamEntity {
 
     @Id
@@ -19,12 +24,36 @@ public class TeamEntity {
 
     private Integer members;
 
-    public TeamEntity(){}
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Date createdDate;
+
+    @LastModifiedDate
+    private Date lastModifiedDate;
+
+    public TeamEntity() {
+    }
 
     public TeamEntity(CreateUpdateTeamDTO createUpdateTeamDTO) {
         this.name = createUpdateTeamDTO.getName();
         this.foundationDate = createUpdateTeamDTO.getFoundationDate();
         this.members = createUpdateTeamDTO.getMembers();
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public Long getId() {

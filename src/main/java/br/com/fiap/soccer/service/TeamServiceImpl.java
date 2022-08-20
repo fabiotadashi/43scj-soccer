@@ -6,7 +6,6 @@ import br.com.fiap.soccer.dto.UpdateTeamMembersDTO;
 import br.com.fiap.soccer.entity.TeamEntity;
 import br.com.fiap.soccer.repository.TeamRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.h2.util.TempFileDeleter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

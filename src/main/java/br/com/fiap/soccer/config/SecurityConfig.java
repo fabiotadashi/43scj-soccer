@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 //.antMatchers(HttpMethod.POST, "/teams**").hasRole("ADMIN")
-                .antMatchers("/users**").permitAll()
+                .antMatchers("/users/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)

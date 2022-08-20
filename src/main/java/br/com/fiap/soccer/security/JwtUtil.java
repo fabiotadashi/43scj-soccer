@@ -24,11 +24,11 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         Date createdDate = Date.from(LocalDateTime.now().toInstant(OffsetDateTime.now().getOffset()));
         Date expirationDate = Date.from(LocalDateTime.now().plusMinutes(expireMinutes).toInstant(OffsetDateTime.now().getOffset()));
+
         return Jwts.builder()
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
                 .setSubject(username)
-                .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }

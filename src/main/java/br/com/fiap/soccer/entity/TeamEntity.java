@@ -1,23 +1,30 @@
-package br.com.fiap.soccer.dto;
+package br.com.fiap.soccer.entity;
 
-import br.com.fiap.soccer.entity.TeamEntity;
+import br.com.fiap.soccer.dto.CreateUpdateTeamDTO;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
-public class TeamDTO {
+@Entity
+@Table(name = "TB_TEAM")
+public class TeamEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private LocalDate foundationDate;
+
     private Integer members;
 
-    public TeamDTO(){}
+    public TeamEntity(){}
 
-    public TeamDTO(TeamEntity teamEntity) {
-        this.id = teamEntity.getId();
-        this.name = teamEntity.getName();
-        this.foundationDate = teamEntity.getFoundationDate();
-        this.members = teamEntity.getMembers();
+    public TeamEntity(CreateUpdateTeamDTO createUpdateTeamDTO) {
+        this.name = createUpdateTeamDTO.getName();
+        this.foundationDate = createUpdateTeamDTO.getFoundationDate();
+        this.members = createUpdateTeamDTO.getMembers();
     }
 
     public Long getId() {

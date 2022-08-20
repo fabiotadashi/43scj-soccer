@@ -1,2 +1,17 @@
 server:
   port: 8081
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    url: jdbc:h2:~/43scj-soccer;DB_CLOSE_ON_EXIT=FALSE
+    username: fiap
+    password: fiap
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update

@@ -4,7 +4,11 @@ import br.com.fiap.soccer.dto.CreateUpdateTeamDTO;
 import br.com.fiap.soccer.dto.TeamDTO;
 import br.com.fiap.soccer.dto.TeamFilterDTO;
 import br.com.fiap.soccer.dto.UpdateTeamMembersDTO;
+import br.com.fiap.soccer.service.TeamService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,75 +21,44 @@ import java.util.stream.Collectors;
 @RequestMapping("teams")
 public class TeamController {
 
-    private List<TeamDTO> list = new ArrayList<>();
+    private TeamService teamService;
 
-    public TeamController() {
-        TeamDTO teamDTO = new TeamDTO();
-        teamDTO.setId(1L);
-        teamDTO.setName("Corinthians");
-        teamDTO.setFoundationDate(LocalDate.of(1910, 01, 01));
-        teamDTO.setMembers(30_000_000);
-        list.add(teamDTO);
-
-        TeamDTO teamDTO1 = new TeamDTO();
-        teamDTO1.setId(2L);
-        teamDTO1.setName("Flamengo");
-        teamDTO1.setFoundationDate(LocalDate.of(1900, 02, 10));
-        teamDTO1.setMembers(31_000_000);
-        list.add(teamDTO1);
+    public TeamController(TeamService teamService) {
+        this.teamService = teamService;
     }
 
     @GetMapping
 //        public List<TeamDTO> list( @RequestParam(required = false) String name) {
     public List<TeamDTO> list( TeamFilterDTO teamFilterDTO) {
-        return list.stream()
-                .filter(teamDTO -> teamFilterDTO.getName() == null || teamDTO.getName().contains(teamFilterDTO.getName()))
-                .collect(Collectors.toList());
+        return teamService.listAll(teamFilterDTO.getName());
     }
 
     @GetMapping("{id}")
     public TeamDTO findById(@PathVariable Long id){
-        return list.stream()
-                .filter(teamDTO -> teamDTO.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return teamService.findById(id);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TeamDTO create(@RequestBody CreateUpdateTeamDTO createUpdateTeamDTO){
-        TeamDTO teamDTO = new TeamDTO();
-        teamDTO.setId(list.size() + 1L);
-        teamDTO.setName(createUpdateTeamDTO.getName());
-        teamDTO.setMembers(createUpdateTeamDTO.getMembers());
-        teamDTO.setFoundationDate(createUpdateTeamDTO.getFoundationDate());
-
-        list.add(teamDTO);
-        return teamDTO;
+        return teamService.create(createUpdateTeamDTO);
     }
 
     @PutMapping("{id}")
     public TeamDTO update(@PathVariable Long id,
                           @RequestBody CreateUpdateTeamDTO createUpdateTeamDTO){
-        TeamDTO teamDTO = findById(id);
-        teamDTO.setName(createUpdateTeamDTO.getName());
-        teamDTO.setMembers(createUpdateTeamDTO.getMembers());
-        teamDTO.setFoundationDate(createUpdateTeamDTO.getFoundationDate());
-
-        return teamDTO;
+        return teamService.update(id, createUpdateTeamDTO);
     }
 
     @PatchMapping("{id}")
     public TeamDTO updateMembers(@PathVariable Long id,
                                  @RequestBody UpdateTeamMembersDTO updateTeamMembersDTO){
-        TeamDTO teamDTO = findById(id);
-        teamDTO.setMembers(updateTeamMembersDTO.getMembers());
-
-        return teamDTO;
+        return teamService.updateMembers(id, updateTeamMembersDTO);
     }
 
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
-        TeamDTO teamDTO = findById(id);
-        list.remove(teamDTO);
+        teamService.delete(id);
     }
 }

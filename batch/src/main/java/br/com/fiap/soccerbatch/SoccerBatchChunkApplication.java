@@ -41,6 +41,7 @@ public class SoccerBatchChunkApplication {
         return new FlatFileItemReaderBuilder<User>()
                 .name("User item reader")
                 .delimited().delimiter(";").names("name", "cpf")
+                .resource(resource)
                 .targetType(User.class)
                 .build();
     }
@@ -59,7 +60,30 @@ public class SoccerBatchChunkApplication {
         return new JdbcBatchItemWriterBuilder<User>()
                 .dataSource(dataSource)
                 .beanMapped()
-                .sql("insert into TB_USER(nome, cpf) values (:nome, :cpf)")
+                .sql("insert into TB_USER(name, cpf) values (:name, :cpf)")
                 .build();
     }
+
+    @Bean
+    public Step step(StepBuilderFactory stepBuilderFactory,
+                     ItemReader<User> itemReader,
+                     ItemProcessor<User, User> itemProcessor,
+                     ItemWriter<User> itemWriter){
+        return stepBuilderFactory.get("csv to database step")
+                .<User, User>chunk(100)
+                .reader(itemReader)
+                .processor(itemProcessor)
+                .writer(itemWriter)
+                .allowStartIfComplete(true)
+                .build();
+    }
+
+    @Bean
+    public Job job(JobBuilderFactory jobBuilderFactory,
+                   Step step){
+        return jobBuilderFactory.get("csv2db job")
+                .start(step)
+                .build();
+    }
+
 }
